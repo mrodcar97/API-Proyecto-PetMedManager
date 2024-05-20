@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
 using Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Repositories.Repositories;
+
 
 namespace APIproyecto.Controllers
 {

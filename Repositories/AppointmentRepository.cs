@@ -1,10 +1,7 @@
-﻿using Domain;
+﻿using DataContext;
+using Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Repositories
 {
@@ -19,9 +16,9 @@ namespace Repositories
 
     public class AppointmentRepository : IAppointmentRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly DataBaseContext _dbContext;
 
-        public AppointmentRepository(DbContext dbContext)
+        public AppointmentRepository(DataBaseContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }

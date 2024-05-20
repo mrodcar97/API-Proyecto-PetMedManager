@@ -1,10 +1,6 @@
 ﻿using Domain;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataContext;
 
 namespace Repositories
 {
@@ -19,9 +15,9 @@ namespace Repositories
 
     public class ClinicRepository : IClinicRepository
     {
-        private readonly DbContext _dbContext;
+        private readonly DataBaseContext _dbContext;
 
-        public ClinicRepository(DbContext dbContext)
+        public ClinicRepository(DataBaseContext dbContext)
         {
             _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }

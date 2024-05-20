@@ -10,6 +10,7 @@ namespace Services
     {
         Task<List<User>> GetUsers();
         Task<User> GetUserById(int id);
+        Task<User> GetUserByEmail(string email);
         Task AddUser(User user);
         Task UpdateUser(User user);
         Task DeleteUser(int id);
@@ -27,6 +28,11 @@ namespace Services
         public async Task<List<User>> GetUsers()
         {
             return await _UserRepository.GetUsers();
+        }
+
+        public async Task<User> GetUserByEmail(string email)
+        {
+            return await _UserRepository.GetUserByEmail(email);
         }
 
         public async Task<User> GetUserById(int id)
@@ -53,7 +59,7 @@ namespace Services
         public async Task DeleteUser(int id)
         {
             await _UserRepository.DeleteUser(id);
-        }
+        }      
     }
 }
 

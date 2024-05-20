@@ -1,18 +1,13 @@
 ﻿using Domain;
 using Repositories;
-using Repositories.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Services
 {
     public interface IPersonService
     {
         Task<List<Person>> GetPeople();
-        Task<Person> GetPersonById(int id);
+        Task<Person> GetPersonById(String id);
         Task AddPerson(Person Person);
         Task UpdatePerson(Person Person);
         Task DeletePerson(int id);
@@ -32,7 +27,7 @@ namespace Services
             return await _PersonRepository.GetPeople();
         }
 
-        public async Task<Person> GetPersonById(int id)
+        public async Task<Person> GetPersonById(String id)
         {
             return await _PersonRepository.GetPersonById(id);
         }

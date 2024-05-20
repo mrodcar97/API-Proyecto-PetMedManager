@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Domain;
 using Services;
+
 
 namespace APIproyecto.Controllers
 {
@@ -20,47 +18,58 @@ namespace APIproyecto.Controllers
 
         // GET: api/User
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsuarios()
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            var users = await _userService.GetUsers();
-            return Ok(users);
+            var Users = await _userService.GetUsers();
+            return Ok(Users);
         }
 
         // GET: api/User/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUsuario(int id)
+        public async Task<ActionResult<User>> GetUser(int id)
         {
-            var user = await _userService.GetUserById(id);
-            if (user == null)
+            var User = await _userService.GetUserById(id);
+            if (User == null)
             {
                 return NotFound();
             }
-            return user;
+            return User;
+        }
+
+        [HttpGet("ByEmail/{Email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(String Email)
+        {
+            var User = await _userService.GetUserByEmail(Email);
+            if (User == null)
+            {
+                return NotFound();
+            }
+            return User;
         }
 
         // POST: api/User
         [HttpPost]
-        public async Task<ActionResult<User>> PostUsuario(User user)
+        public async Task<ActionResult<User>> PostUser(User User)
         {
-            await _userService.AddUser(user);
-            return CreatedAtAction("GetUsuario", new { id = user.Id }, user);
+            await _userService.AddUser(User);
+            return CreatedAtAction("GetUser", new { id = User.Id }, User);
         }
 
         // PUT: api/User/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, User user)
+        public async Task<IActionResult> PutUser(int id, User User)
         {
-            if (id != user.Id)
+            if (id != User.Id)
             {
                 return BadRequest();
             }
-            await _userService.UpdateUser(user);
+            await _userService.UpdateUser(User);
             return NoContent();
         }
 
         // DELETE: api/User/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsuario(int id)
+        public async Task<IActionResult> DeleteUser(int id)
         {
             await _userService.DeleteUser(id);
             return NoContent();

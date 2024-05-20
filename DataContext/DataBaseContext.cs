@@ -24,6 +24,8 @@ public partial class DataBaseContext : DbContext
 
     public virtual DbSet<Pet> Pets { get; set; }
 
+    public virtual DbSet<Shift> Shifts { get; set; }
+
     public virtual DbSet<Test> Tests { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -31,6 +33,7 @@ public partial class DataBaseContext : DbContext
     public virtual DbSet<VisitHistory> VisitHistories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=Proyecto_Veterinaria;Integrated Security=True;Trust Server Certificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -44,7 +47,13 @@ public partial class DataBaseContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
+            entity.Property(e => e.Description)
+                .HasMaxLength(100)
+                .IsFixedLength();
             entity.Property(e => e.PetId).HasColumnName("Pet_ID");
+            entity.Property(e => e.Title)
+                .HasMaxLength(50)
+                .IsFixedLength();
             entity.Property(e => e.VetId)
                 .HasMaxLength(9)
                 .IsUnicode(false)
@@ -164,6 +173,25 @@ public partial class DataBaseContext : DbContext
                 .HasConstraintName("FK_Pets_Clients");
         });
 
+        modelBuilder.Entity<Shift>(entity =>
+        {
+            entity.HasKey(e => e.ShiftId).HasName("PK__Shifts__C0A838E1DC874CC9");
+
+            entity.Property(e => e.ShiftId).HasColumnName("ShiftID");
+            entity.Property(e => e.Notes)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.VeterinarianId)
+                .HasMaxLength(9)
+                .IsUnicode(false)
+                .HasColumnName("VeterinarianID");
+
+            entity.HasOne(d => d.Veterinarian).WithMany(p => p.Shifts)
+                .HasForeignKey(d => d.VeterinarianId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Shifts_Person");
+        });
+
         modelBuilder.Entity<Test>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__tests__3214EC27FC30D6E4");
@@ -222,9 +250,6 @@ public partial class DataBaseContext : DbContext
             entity.Property(e => e.Id)
                 .ValueGeneratedNever()
                 .HasColumnName("ID");
-            entity.Property(e => e.Date)
-                .HasMaxLength(45)
-                .IsUnicode(false);
             entity.Property(e => e.Description)
                 .HasMaxLength(200)
                 .IsUnicode(false);
@@ -250,4 +275,3 @@ public partial class DataBaseContext : DbContext
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
 }
-

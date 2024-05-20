@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Repositories;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Repositories.Repositories;
+using DataContext;
+using Microsoft.EntityFrameworkCore;
 
 namespace APIproyecto.Controllers
 {
@@ -12,26 +9,26 @@ namespace APIproyecto.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        private readonly IPersonRepository _personRepository;
+        private readonly DataBaseContext _dbContext;
 
-        public PersonController(IPersonRepository personRepository)
+        public PersonController(DataBaseContext dbContext)
         {
-            _personRepository = personRepository ?? throw new ArgumentNullException(nameof(personRepository));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         // GET: api/Person
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
-            var people = await _personRepository.GetPeople();
+            var people = await _dbContext.People.ToListAsync();
             return Ok(people);
         }
 
         // GET: api/Person/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Person>> GetPerson(int id)
+        [HttpGet("{nationalID}")]
+        public async Task<ActionResult<Person>> GetPerson(String nationalID)
         {
-            var person = await _personRepository.GetPersonById(id);
+            var person = await _dbContext.People.FindAsync(nationalID);
             if (person == null)
             {
                 return NotFound();
@@ -43,28 +40,60 @@ namespace APIproyecto.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> PostPerson(Person person)
         {
-            await _personRepository.AddPerson(person);
-            return CreatedAtAction("GetPerson", new { id = person.Id }, person);
+            _dbContext.People.Add(person);
+            await _dbContext.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetPerson), new {nationalID = person.NationalId }, person);
         }
 
         // PUT: api/Person/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPerson(int id, Person person)
+        [HttpPut("{nationalID}")]
+        public async Task<IActionResult> PutPerson(String nationalID, Person person)
         {
-            if (id != person.Id)
+            if (nationalID != person.NationalId)
             {
                 return BadRequest();
             }
-            await _personRepository.UpdatePerson(person);
+
+            _dbContext.Entry(person).State = EntityState.Modified;
+
+            try
+            {
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PersonExists(nationalID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
             return NoContent();
         }
 
         // DELETE: api/Person/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePerson(int id)
+        [HttpDelete("{nationalID}")]
+        public async Task<IActionResult> DeletePerson(String nationalID)
         {
-            await _personRepository.DeletePerson(id);
+            var person = await _dbContext.People.FindAsync(nationalID);
+            if (person == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.People.Remove(person);
+            await _dbContext.SaveChangesAsync();
+
             return NoContent();
+        }
+
+        private bool PersonExists(String nationalID)
+        {
+            return _dbContext.People.Any(e => e.NationalId == nationalID);
         }
     }
 }

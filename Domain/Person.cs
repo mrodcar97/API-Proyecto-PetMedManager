@@ -37,6 +37,8 @@ public partial class Person
 
     public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 
+    public virtual ICollection<Shift> Shifts { get; set; } = new List<Shift>();
+
     public virtual ICollection<User> Users { get; set; } = new List<User>();
 
     public virtual ICollection<VisitHistory> VisitHistories { get; set; } = new List<VisitHistory>();

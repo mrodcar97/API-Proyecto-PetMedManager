@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Repositories
-{
-    using Domain;
+﻿    using Domain;
     using Microsoft.EntityFrameworkCore;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using DataContext;
 
     namespace Repositories
     {
@@ -27,9 +15,9 @@ namespace Repositories
 
         public class PetRepository : IPetRepository
         {
-            private readonly DbContext _dbContext;
+            private readonly DataBaseContext _dbContext;
 
-            public PetRepository(DbContext dbContext)
+            public PetRepository(DataBaseContext dbContext)
             {
                 _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             }
@@ -68,4 +56,3 @@ namespace Repositories
         }
     }
 
-}
