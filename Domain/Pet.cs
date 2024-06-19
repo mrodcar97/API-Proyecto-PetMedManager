@@ -21,11 +21,11 @@ public partial class Pet
 
     public string OwnerId { get; set; } = null!;
 
-    public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+    public virtual ICollection<Appointment>? Appointments { get; set; } = new List<Appointment>();
 
-    public virtual Person Owner { get; set; } = null!;
+    public virtual Person? Owner { get; set; } = null!;
 
-    public virtual ICollection<Test> Tests { get; set; } = new List<Test>();
+    public virtual ICollection<Test>? Tests { get; set; } = new List<Test>();
 
-    public virtual ICollection<VisitHistory> VisitHistories { get; set; } = new List<VisitHistory>();
+    public virtual ICollection<VisitHistory>? VisitHistories { get; set; } = new List<VisitHistory>();
 }

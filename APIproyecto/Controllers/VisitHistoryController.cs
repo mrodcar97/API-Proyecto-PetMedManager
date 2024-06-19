@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Repositories;
+using Services;
 
 
 namespace APIproyecto.Controllers
@@ -9,18 +9,18 @@ namespace APIproyecto.Controllers
     [ApiController]
     public class VisitHistoryController : ControllerBase
     {
-        private readonly IVisitHistoryRepository _VisitHistoryRepository;
+        private readonly IVisitHistoryService _VisitHistoryService;
 
-        public VisitHistoryController(IVisitHistoryRepository VisitHistoryRepository)
+        public VisitHistoryController(IVisitHistoryService VisitHistoryService)
         {
-            _VisitHistoryRepository = VisitHistoryRepository ?? throw new ArgumentNullException(nameof(VisitHistoryRepository));
+            _VisitHistoryService = VisitHistoryService ?? throw new ArgumentNullException(nameof(VisitHistoryService));
         }
 
         // GET: api/VisitHistory
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VisitHistory>>> GetVisitHistories()
         {
-            var VisitHistorys = await _VisitHistoryRepository.GetVisitHistories();
+            var VisitHistorys = await _VisitHistoryService.GetVisitHistories();
             return Ok(VisitHistorys);
         }
 
@@ -28,7 +28,7 @@ namespace APIproyecto.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VisitHistory>> GetVisitHistory(int id)
         {
-            var VisitHistory = await _VisitHistoryRepository.GetVisitHistoryById(id);
+            var VisitHistory = await _VisitHistoryService.GetVisitHistoryById(id);
             if (VisitHistory == null)
             {
                 return NotFound();
@@ -36,11 +36,23 @@ namespace APIproyecto.Controllers
             return VisitHistory;
         }
 
+        [HttpGet("ByPet{id}")]
+        public async Task<ActionResult<IEnumerable<VisitHistory>>> GetVisitHistoryByPet(int id)
+        {
+            var VisitHistory = await _VisitHistoryService.GetVisitHistoriesByPet(id);
+            if (VisitHistory == null)
+            {
+                return NotFound();
+            }
+            return VisitHistory;
+        }
+
+
         // POST: api/VisitHistory
         [HttpPost]
         public async Task<ActionResult<VisitHistory>> PostVisitHistory(VisitHistory VisitHistory)
         {
-            await _VisitHistoryRepository.AddVisitHistory(VisitHistory);
+            await _VisitHistoryService.AddVisitHistory(VisitHistory);
             return CreatedAtAction("GetVisitHistory", new { id = VisitHistory.Id }, VisitHistory);
         }
 
@@ -52,7 +64,7 @@ namespace APIproyecto.Controllers
             {
                 return BadRequest();
             }
-            await _VisitHistoryRepository.UpdateVisitHistory(VisitHistory);
+            await _VisitHistoryService.UpdateVisitHistory(VisitHistory);
             return NoContent();
         }
 
@@ -60,7 +72,7 @@ namespace APIproyecto.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVisitHistory(int id)
         {
-            await _VisitHistoryRepository.DeleteVisitHistory(id);
+            await _VisitHistoryService.DeleteVisitHistory(id);
             return NoContent();
         }
     }

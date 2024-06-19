@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Repositories;
+using Services;
 
 
 namespace APIproyecto.Controllers
@@ -9,18 +9,18 @@ namespace APIproyecto.Controllers
     [ApiController]
     public class PetController : ControllerBase
     {
-        private readonly IPetRepository _petRepository;
+        private readonly IPetService _petService;
 
-        public PetController(IPetRepository petRepository)
+        public PetController(IPetService petService)
         {
-            _petRepository = petRepository ?? throw new ArgumentNullException(nameof(petRepository));
+            _petService = petService ?? throw new ArgumentNullException(nameof(petService));
         }
 
         // GET: api/Pet
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pet>>> GetPets()
         {
-            var pets = await _petRepository.GetPets();
+            var pets = await _petService.GetPets();
             return Ok(pets);
         }
 
@@ -28,7 +28,18 @@ namespace APIproyecto.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Pet>> GetPet(int id)
         {
-            var pet = await _petRepository.GetPetById(id);
+            var pet = await _petService.GetPetById(id);
+            if (pet == null)
+            {
+                return NotFound();
+            }
+            return pet;
+        }
+
+        [HttpGet("ByOwner{OwnerId}")]
+        public async Task<ActionResult<IEnumerable<Pet>>> GetPetByOwnerId(String OwnerId)
+        {
+            var pet = await _petService.GetPetByOwnerId(OwnerId);
             if (pet == null)
             {
                 return NotFound();
@@ -40,7 +51,7 @@ namespace APIproyecto.Controllers
         [HttpPost]
         public async Task<ActionResult<Pet>> PostPet(Pet pet)
         {
-            await _petRepository.AddPet(pet);
+            await _petService.AddPet(pet);
             return CreatedAtAction("GetPet", new { id = pet.Id }, pet);
         }
 
@@ -52,7 +63,7 @@ namespace APIproyecto.Controllers
             {
                 return BadRequest();
             }
-            await _petRepository.UpdatePet(pet);
+            await _petService.UpdatePet(pet);
             return NoContent();
         }
 
@@ -60,7 +71,7 @@ namespace APIproyecto.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePet(int id)
         {
-            await _petRepository.DeletePet(id);
+            await _petService.DeletePet(id);
             return NoContent();
         }
     }

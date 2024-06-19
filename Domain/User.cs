@@ -11,11 +11,9 @@ public partial class User
 
     public string Password { get; set; } = null!;
 
-    public string Rango { get; set; } = null!;
-
     public string? PersonId { get; set; }
 
-    public virtual ICollection<Clinic> Clinics { get; set; } = new List<Clinic>();
+    public virtual ICollection<Clinic>? Clinics { get; set; } = new List<Clinic>();
 
     public virtual Person? Person { get; set; }
 }

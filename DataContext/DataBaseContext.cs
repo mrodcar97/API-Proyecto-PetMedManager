@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace DataContext;
 
@@ -34,7 +33,7 @@ public partial class DataBaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=Proyecto_Veterinaria;Integrated Security=True;Trust Server Certificate=True");
+        => optionsBuilder.UseSqlServer("Server=tcp:petmedmanager.database.windows.net,1433;Initial Catalog=PetMedManagerBD;Persist Security Info=False;User ID=petmedAdmin;Password=@Bendimia99;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,9 +43,7 @@ public partial class DataBaseContext : DbContext
 
             entity.ToTable("appointments");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("ID");
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Description)
                 .HasMaxLength(100)
                 .IsFixedLength();
@@ -61,18 +58,16 @@ public partial class DataBaseContext : DbContext
 
             entity.HasOne(d => d.Pet).WithMany(p => p.Appointments)
                 .HasForeignKey(d => d.PetId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Appointme_Pet");
 
             entity.HasOne(d => d.Vet).WithMany(p => p.Appointments)
                 .HasForeignKey(d => d.VetId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Appointmen_Vet");
         });
 
         modelBuilder.Entity<Clinic>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__clinics__3214EC27B82C3850");
+            entity.HasKey(e => e.Id).HasName("PK__clinics__3214EC27C94CF30D");
 
             entity.ToTable("clinics");
 
@@ -109,16 +104,16 @@ public partial class DataBaseContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("National_ID");
             entity.Property(e => e.Address)
-                .HasMaxLength(45)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.ClinicId).HasColumnName("Clinic_ID");
             entity.Property(e => e.DateOfBirth).HasColumnName("Date_Of_Birth");
             entity.Property(e => e.Email)
-                .HasMaxLength(45)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.LastLogin).HasColumnName("Last_Login");
             entity.Property(e => e.Locality)
-                .HasMaxLength(45)
+                .HasMaxLength(100)
                 .IsUnicode(false);
             entity.Property(e => e.Name)
                 .HasMaxLength(45)
@@ -131,23 +126,22 @@ public partial class DataBaseContext : DbContext
                 .HasMaxLength(45)
                 .IsUnicode(false);
             entity.Property(e => e.Surname)
-                .HasMaxLength(45)
+                .HasMaxLength(100)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Clinic).WithMany(p => p.People)
                 .HasForeignKey(d => d.ClinicId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Clients_Clinics");
         });
 
         modelBuilder.Entity<Pet>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__pets__3214EC27AAF9DFA6");
+            entity.HasKey(e => e.Id).HasName("PK__pets__3214EC2739121313");
 
             entity.ToTable("pets");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("ID");
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Breed)
                 .HasMaxLength(45)
                 .IsUnicode(false);
@@ -188,13 +182,12 @@ public partial class DataBaseContext : DbContext
 
             entity.HasOne(d => d.Veterinarian).WithMany(p => p.Shifts)
                 .HasForeignKey(d => d.VeterinarianId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Shifts_Person");
         });
 
         modelBuilder.Entity<Test>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__tests__3214EC27FC30D6E4");
+            entity.HasKey(e => e.Id).HasName("PK__tests__3214EC2755E93CC2");
 
             entity.ToTable("tests");
 
@@ -215,13 +208,11 @@ public partial class DataBaseContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__users__3214EC272F13ED86");
+            entity.HasKey(e => e.Id).HasName("PK__users__3214EC27F1FD906C");
 
             entity.ToTable("users");
 
-            entity.Property(e => e.Id)
-                .ValueGeneratedNever()
-                .HasColumnName("ID");
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.Email)
                 .HasMaxLength(45)
                 .IsUnicode(false);
@@ -232,9 +223,6 @@ public partial class DataBaseContext : DbContext
                 .HasMaxLength(9)
                 .IsUnicode(false)
                 .HasColumnName("Person_ID");
-            entity.Property(e => e.Rango)
-                .HasMaxLength(45)
-                .IsUnicode(false);
 
             entity.HasOne(d => d.Person).WithMany(p => p.Users)
                 .HasForeignKey(d => d.PersonId)
@@ -243,7 +231,7 @@ public partial class DataBaseContext : DbContext
 
         modelBuilder.Entity<VisitHistory>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PK__visit_hi__3214EC2769D8982E");
+            entity.HasKey(e => e.Id).HasName("PK__visit_hi__3214EC273F38009B");
 
             entity.ToTable("visit_history");
 

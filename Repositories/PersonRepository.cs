@@ -1,6 +1,8 @@
 ﻿using Domain;
 using DataContext;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
 
 namespace Repositories
 {
@@ -8,9 +10,10 @@ namespace Repositories
     {
         Task<List<Person>> GetPeople();
         Task<Person> GetPersonById(String id);
+        Task<List<Person>> GetVetsByClinic(String clinicID);
         Task AddPerson(Person person);
         Task UpdatePerson(Person person);
-        Task DeletePerson(int id);
+        Task DeletePerson(string id);
     }
 
     public class PersonRepository : IPersonRepository
@@ -32,6 +35,13 @@ namespace Repositories
             return await _dbContext.Set<Person>().FindAsync(id);
         }
 
+        public async Task<List<Person>> GetVetsByClinic(String clinicID)
+        {
+            return await _dbContext.Set<Person>()
+                .Where(p => p.ClinicId == Convert.ToInt32(clinicID) && p.Rol == "Veterinario") 
+                .ToListAsync();
+        }
+
         public async Task AddPerson(Person Person)
         {
             await _dbContext.Set<Person>().AddAsync(Person);
@@ -44,7 +54,7 @@ namespace Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task DeletePerson(int id)
+        public async Task DeletePerson(string id)
         {
             var Person = await _dbContext.Set<Person>().FindAsync(id);
             if (Person != null)

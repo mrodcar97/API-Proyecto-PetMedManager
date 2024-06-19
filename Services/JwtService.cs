@@ -33,8 +33,8 @@ namespace Services
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, person.NationalId),
-                new Claim(ClaimTypes.Email, person.Email),
                 new Claim(ClaimTypes.Role, person.Rol),
+                new Claim(ClaimTypes.SerialNumber, person.ClinicId.ToString()),
                 // Puedes agregar más claims según sea necesario
             };
 

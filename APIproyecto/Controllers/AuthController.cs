@@ -13,30 +13,46 @@ namespace APIproyecto.Controllers
         private readonly IUserService _userService;
         private readonly IPersonService _personService;
 
-        public AuthController(IJwtService jwtService, IUserService userService)
+        public AuthController(IJwtService jwtService, IUserService userService, IPersonService personService)
         {
-            _jwtService = jwtService;
-            _userService = userService;
+            _jwtService = jwtService ?? throw new ArgumentNullException(nameof(jwtService));
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _personService = personService ?? throw new ArgumentNullException(nameof(personService));
         }
 
         [HttpPost("login")]
         public async Task<ActionResult<LoginResponse>> Login(User userFront)
         {
+            if (userFront == null)
+            {
+                return BadRequest("Request is null.");
+            }
+
             var user = await _userService.GetUserByEmail(userFront.Email);
 
             if (user == null || user.Password != userFront.Password)
             {
-                return BadRequest("Credenciales inválidas. Verifica tu correo electrónico y contraseña.");
+                return BadRequest("Credenciales inválidas.");
+            }
+
+            var person = await _personService.GetPersonById(user.PersonId);
+
+            if (person == null)
+            {
+                return BadRequest("No se encontró el usuario.");
             }
             else
             {
-                var person = await _personService.GetPersonById(user.PersonId);
-                var token = _jwtService.GenerateToken(person);
 
-                return Ok(new LoginResponse { token = token,user = user});
+
+            var token = _jwtService.GenerateToken(person);
+
+
+            return Ok(new LoginResponse {token = token});
+            }
 
             }
         }
     }
-}
+
 

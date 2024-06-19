@@ -15,7 +15,7 @@ public partial class VisitHistory
 
     public string VetId { get; set; } = null!;
 
-    public virtual Pet Pet { get; set; } = null!;
+    public virtual Pet? Pet { get; set; } = null!;
 
-    public virtual Person Vet { get; set; } = null!;
+    public virtual Person? Vet { get; set; } = null!;
 }

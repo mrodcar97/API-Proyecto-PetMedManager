@@ -15,5 +15,5 @@ public partial class Test
 
     public int PetId { get; set; }
 
-    public virtual Pet Pet { get; set; } = null!;
+    public virtual Pet? Pet { get; set; } = null!;
 }

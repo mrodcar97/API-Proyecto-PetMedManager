@@ -12,6 +12,7 @@ namespace Services
     {
         Task<List<Appointment>> GetAppointments();
         Task<Appointment> GetAppointmentById(int id);
+        Task<List<Appointment>> GetAppointmentsByDate(DateOnly date);
         Task AddAppointment(Appointment Appointment);
         Task UpdateAppointment(Appointment Appointment);
         Task DeleteAppointment(int id);
@@ -29,6 +30,11 @@ namespace Services
         public async Task<List<Appointment>> GetAppointments()
         {
             return await _AppointmentRepository.GetAppointments();
+        }
+
+        public async Task<List<Appointment>> GetAppointmentsByDate(DateOnly date)
+        {
+            return await _AppointmentRepository.GetAppointmentsByDate(date);
         }
 
         public async Task<Appointment> GetAppointmentById(int id)

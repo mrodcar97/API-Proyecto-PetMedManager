@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Domain;
-using Repositories;
+using Services;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,18 +11,18 @@ namespace APIproyecto.Controllers
     [ApiController]
     public class AppointmentController : ControllerBase
     {
-        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IAppointmentService _appointmentService;
 
-        public AppointmentController(IAppointmentRepository appointmentRepository)
+        public AppointmentController(IAppointmentService appointmentService)
         {
-            _appointmentRepository = appointmentRepository ?? throw new ArgumentNullException(nameof(appointmentRepository));
+            _appointmentService = appointmentService ?? throw new ArgumentNullException(nameof(appointmentService));
         }
 
         // GET: api/Appointment
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments()
         {
-            var appointments = await _appointmentRepository.GetAppointments();
+            var appointments = await _appointmentService.GetAppointments();
             return Ok(appointments);
         }
 
@@ -30,19 +30,37 @@ namespace APIproyecto.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Appointment>> GetAppointment(int id)
         {
-            var appointment = await _appointmentRepository.GetAppointmentById(id);
+            var appointment = await _appointmentService.GetAppointmentById(id);
             if (appointment == null)
             {
                 return NotFound();
             }
             return appointment;
         }
+        // GET: api/Appointment//(fecha)
+        [HttpGet("for{date}")]
+        public async Task<ActionResult<IEnumerable<Appointment>>> GetAppointments(string date)
+        {
+            if (!DateOnly.TryParse(date, out DateOnly parsedDate))
+            {
+                return BadRequest("Invalid date format.");
+            }
+
+            var appointments = await _appointmentService.GetAppointmentsByDate(parsedDate);
+
+            if (appointments == null || !appointments.Any())
+            {
+                return NotFound();
+            }
+
+            return Ok(appointments);
+        }
 
         // POST: api/Appointment
         [HttpPost]
         public async Task<ActionResult<Appointment>> PostAppointment(Appointment appointment)
         {
-            await _appointmentRepository.AddAppointment(appointment);
+            await _appointmentService.AddAppointment(appointment);
             return CreatedAtAction("GetAppointment", new { id = appointment.Id }, appointment);
         }
 
@@ -54,7 +72,7 @@ namespace APIproyecto.Controllers
             {
                 return BadRequest();
             }
-            await _appointmentRepository.UpdateAppointment(appointment);
+            await _appointmentService.UpdateAppointment(appointment);
             return NoContent();
         }
 
@@ -62,7 +80,7 @@ namespace APIproyecto.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
-            await _appointmentRepository.DeleteAppointment(id);
+            await _appointmentService.DeleteAppointment(id);
             return NoContent();
         }
     }

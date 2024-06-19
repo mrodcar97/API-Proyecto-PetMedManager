@@ -1,6 +1,7 @@
 ﻿using Domain;
 using Microsoft.EntityFrameworkCore;
 using DataContext;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Repositories
 {
@@ -8,6 +9,7 @@ namespace Repositories
     {
         Task<List<VisitHistory>> GetVisitHistories();
         Task<VisitHistory> GetVisitHistoryById(int id);
+        Task<List<VisitHistory>> GetVisitHistoriesByPet(int id);
         Task AddVisitHistory(VisitHistory VisitHistory);
         Task UpdateVisitHistory(VisitHistory VisitHistory);
         Task DeleteVisitHistory(int id);
@@ -30,6 +32,13 @@ namespace Repositories
         public async Task<VisitHistory> GetVisitHistoryById(int id)
         {
             return await _dbContext.Set<VisitHistory>().FindAsync(id);
+        }
+
+        public async Task<List<VisitHistory>> GetVisitHistoriesByPet(int id)
+        {
+            return await _dbContext.Set<VisitHistory>()
+               .Where(v => v.PetId == id)
+               .ToListAsync();
         }
 
         public async Task AddVisitHistory(VisitHistory VisitHistory)

@@ -8,6 +8,7 @@ namespace Services
     {
         Task<List<Pet>> GetPets();
         Task<Pet> GetPetById(int id);
+        Task<List<Pet>> GetPetByOwnerId(string id);
         Task AddPet(Pet Pet);
         Task UpdatePet(Pet Pet);
         Task DeletePet(int id);
@@ -30,6 +31,11 @@ namespace Services
         public async Task<Pet> GetPetById(int id)
         {
             return await _PetRepository.GetPetById(id);
+        }
+
+        public async Task<List<Pet>> GetPetByOwnerId(string id)
+        {
+            return await _PetRepository.GetPetByOwnerId(id);
         }
 
         public async Task AddPet(Pet Pet)

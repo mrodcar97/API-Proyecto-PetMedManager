@@ -9,6 +9,7 @@ namespace Repositories
     {
         Task<List<Appointment>> GetAppointments();
         Task<Appointment> GetAppointmentById(int id);
+        Task<List<Appointment>> GetAppointmentsByDate(DateOnly date);
         Task AddAppointment(Appointment appointment);
         Task UpdateAppointment(Appointment appointment);
         Task DeleteAppointment(int id);
@@ -26,6 +27,13 @@ namespace Repositories
         public async Task<List<Appointment>> GetAppointments()
         {
             return await _dbContext.Set<Appointment>().ToListAsync();
+        }
+
+        public async Task<List<Appointment>> GetAppointmentsByDate(DateOnly date)
+        {
+            return await _dbContext.Set<Appointment>()
+                .Where(a => a.Date == date)
+                .ToListAsync();
         }
 
         public async Task<Appointment> GetAppointmentById(int id)

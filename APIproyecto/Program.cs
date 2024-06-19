@@ -32,6 +32,10 @@ builder.Services.AddScoped<ITestService, TestService>();
 
 builder.Services.AddScoped<IVisitHistoryRepository, VisitHistoryRepository>();
 builder.Services.AddScoped<IVisitHistoryService, VisitHistoryService>();
+
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
+builder.Services.AddScoped<IShiftService, ShiftService>();
+
 builder.Services.AddScoped<HttpClient>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");

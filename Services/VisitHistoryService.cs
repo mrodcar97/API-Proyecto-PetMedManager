@@ -7,6 +7,7 @@ namespace Services
     {
         Task<List<VisitHistory>> GetVisitHistories();
         Task<VisitHistory> GetVisitHistoryById(int id);
+        Task<List<VisitHistory>> GetVisitHistoriesByPet(int id);
         Task AddVisitHistory(VisitHistory VisitHistory);
         Task UpdateVisitHistory(VisitHistory VisitHistory);
         Task DeleteVisitHistory(int id);
@@ -30,6 +31,12 @@ namespace Services
         {
             return await _VisitHistoryRepository.GetVisitHistoryById(id);
         }
+
+        public async Task<List<VisitHistory>> GetVisitHistoriesByPet(int id)
+        {
+            return await _VisitHistoryRepository.GetVisitHistoriesByPet(id);
+        }
+
 
         public async Task AddVisitHistory(VisitHistory VisitHistory)
         {

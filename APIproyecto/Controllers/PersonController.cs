@@ -2,6 +2,7 @@
 using Domain;
 using DataContext;
 using Microsoft.EntityFrameworkCore;
+using Services;
 
 namespace APIproyecto.Controllers
 {
@@ -9,18 +10,18 @@ namespace APIproyecto.Controllers
     [ApiController]
     public class PersonController : ControllerBase
     {
-        private readonly DataBaseContext _dbContext;
+        private readonly IPersonService _personService;
 
-        public PersonController(DataBaseContext dbContext)
+        public PersonController(IPersonService personService)
         {
-            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+            _personService = personService ?? throw new ArgumentNullException(nameof(personService));
         }
 
         // GET: api/Person
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
         {
-            var people = await _dbContext.People.ToListAsync();
+            var people = await _personService.GetPeople();
             return Ok(people);
         }
 
@@ -28,7 +29,18 @@ namespace APIproyecto.Controllers
         [HttpGet("{nationalID}")]
         public async Task<ActionResult<Person>> GetPerson(String nationalID)
         {
-            var person = await _dbContext.People.FindAsync(nationalID);
+            var person = await _personService.GetPersonById(nationalID);
+            if (person == null)
+            {
+                return NotFound();
+            }
+            return person;
+        }
+
+        [HttpGet("ByClinic{clinicID}")]
+        public async Task<ActionResult<IEnumerable<Person>>> GetVetsByClinic(String clinicID)
+        {
+            var person = await _personService.GetVetsByClinic(clinicID);
             if (person == null)
             {
                 return NotFound();
@@ -40,8 +52,7 @@ namespace APIproyecto.Controllers
         [HttpPost]
         public async Task<ActionResult<Person>> PostPerson(Person person)
         {
-            _dbContext.People.Add(person);
-            await _dbContext.SaveChangesAsync();
+            await _personService.AddPerson(person);
             return CreatedAtAction(nameof(GetPerson), new {nationalID = person.NationalId }, person);
         }
 
@@ -54,46 +65,16 @@ namespace APIproyecto.Controllers
                 return BadRequest();
             }
 
-            _dbContext.Entry(person).State = EntityState.Modified;
-
-            try
-            {
-                await _dbContext.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!PersonExists(nationalID))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _personService.UpdatePerson(person);
             return NoContent();
         }
 
         // DELETE: api/Person/5
         [HttpDelete("{nationalID}")]
-        public async Task<IActionResult> DeletePerson(String nationalID)
+        public async Task<IActionResult> DeletePerson(string nationalID)
         {
-            var person = await _dbContext.People.FindAsync(nationalID);
-            if (person == null)
-            {
-                return NotFound();
-            }
-
-            _dbContext.People.Remove(person);
-            await _dbContext.SaveChangesAsync();
-
+            await _personService.DeletePerson(nationalID);
             return NoContent();
-        }
-
-        private bool PersonExists(String nationalID)
-        {
-            return _dbContext.People.Any(e => e.NationalId == nationalID);
         }
     }
 }

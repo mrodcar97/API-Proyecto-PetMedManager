@@ -8,9 +8,10 @@ namespace Services
     {
         Task<List<Person>> GetPeople();
         Task<Person> GetPersonById(String id);
+        Task<List<Person>> GetVetsByClinic(String clinicID);
         Task AddPerson(Person Person);
         Task UpdatePerson(Person Person);
-        Task DeletePerson(int id);
+        Task DeletePerson(string id);
     }
 
     public class PersonService : IPersonService
@@ -27,9 +28,14 @@ namespace Services
             return await _PersonRepository.GetPeople();
         }
 
-        public async Task<Person> GetPersonById(String id)
+        public async Task<Person> GetPersonById(string id)
         {
             return await _PersonRepository.GetPersonById(id);
+        }
+
+        public async Task<List<Person>> GetVetsByClinic(String clinicID)
+        {
+            return await _PersonRepository.GetVetsByClinic(clinicID);
         }
 
         public async Task AddPerson(Person Person)
@@ -48,7 +54,7 @@ namespace Services
             await _PersonRepository.UpdatePerson(Person);
         }
 
-        public async Task DeletePerson(int id)
+        public async Task DeletePerson(string id)
         {
             await _PersonRepository.DeletePerson(id);
         }

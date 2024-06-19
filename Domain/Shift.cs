@@ -17,5 +17,5 @@ public partial class Shift
 
     public string? Notes { get; set; }
 
-    public virtual Person Veterinarian { get; set; } = null!;
+    public virtual Person? Veterinarian { get; set; } = null!;
 }

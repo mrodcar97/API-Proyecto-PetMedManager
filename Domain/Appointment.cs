@@ -15,13 +15,13 @@ public partial class Appointment
 
     public TimeOnly StartTime { get; set; }
 
-    public TimeOnly EndTime { get; set; }
+    public TimeOnly? EndTime { get; set; }
 
-    public string VetId { get; set; } = null!;
+    public string? VetId { get; set; }
 
-    public int PetId { get; set; }
+    public int? PetId { get; set; }
 
-    public virtual Pet Pet { get; set; } = null!;
+    public virtual Pet? Pet { get; set; }
 
-    public virtual Person Vet { get; set; } = null!;
+    public virtual Person? Vet { get; set; }
 }
